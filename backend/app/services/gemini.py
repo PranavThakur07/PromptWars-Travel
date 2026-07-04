@@ -21,7 +21,7 @@ def dereference_schema(schema: dict) -> dict:
                 ref_path = node["$ref"]
                 def_name = ref_path.split("/")[-1]
                 return resolve(defs[def_name])
-            return {k: resolve(v) for k, v in node.items() if k not in ["title", "default", "additionalProperties"]}
+            return {k: resolve(v) for k, v in node.items() if not (k == "description" and isinstance(v, str)) and k not in ["title", "default", "additionalProperties"]}
         elif isinstance(node, list):
             return [resolve(x) for x in node]
         return node
