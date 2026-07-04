@@ -1,126 +1,119 @@
-# ChefPlanner AI - Cooking To-Do List & Meal Plan Generator
+# Culture Compass AI — Immersive Travel Guide & Cultural Companion
 
-ChefPlanner AI is a client-side React 19 micro-application developed for hackathons. It generates a daily meal plan (Breakfast, Lunch, Dinner), shopping lists, substitutions, and budget feasibility reports dynamically utilizing the **Google Gemini 1.5 Flash API**. 
-
-The app features a Google Material Design 3 inspired, high-contrast, fully responsive, and accessible dashboard containing interactive recipe check-off items, cooking timelines, macro-nutrient charts, and budget meters.
+Culture Compass AI is a premium, responsive React 19 web application paired with a FastAPI backend designed to deliver curated, culture-focused travel expeditions. Powered by **Google Gemini 2.5 Flash**, it translates travel preferences (destination, budget, travelers, interests, dates, and accessibility needs) into an editorial timeline, Michelin-style dining recommendations, hidden local gems, checklist notebooks, and postcard journals.
 
 ---
 
 ## 🚀 Key Features
 
-* **Real Gemini API Integration**: Single request using low-temperature structured output via a declared JSON schema. No mock responses or placeholders.
-* **Smart Budget Logic**: Evaluates ingredient costs against your budget. Generates cost usage meters and suggests cheaper alternatives if exceeded.
-* **Interactive To-Do Checklists**: Marks off recipe steps and grocery items as they are completed.
-* **Pantry Adaptability & Substitutions**: Identifies swaps for allergies, dietary restrictions, and ingredients to avoid.
-* **High Accessibility (WCAG compliant)**: Full keyboard navigation support with focus-visible indicators, proper semantic headings, and ARIA roles.
-* **Micro-Animations & Themes**: Responsive layouts supporting both system and toggleable Light/Dark modes, loading animation panels with chef tip messages, and success toasts.
-* **Local Storage Persistence**: Safely saves form inputs, API key configurations, and generated meal plans in the client browser across reloads.
+* **Immersive Editorial Timeline**: Structured day-by-day expedition plans mapping travel times, estimated costs, and local activities.
+* **Michelin-Inspired Culinary Journal**: Curated local dish recommendations, street markets, price classifications, and vegetarian alternatives.
+* **Secret Spots & Hidden Gems**: Off-the-beaten-path locations with confidence matching scores and local historical value notes.
+* **Smart Budget Infographics**: Financial cost allocations (transport, dining, sightseeing, shopping) comparing estimated costs to user budget with saving swap options.
+* **Ruled Notebook Ledger Checklist**: Weather-adaptive smart packing check-lists and a local phrasebook featuring phonetic pronunciations.
+* **Physical Postcard & Handwriting Diary**: Generates a shareable visual travel postcard mockup with local stamps, wax seals, and copyable journal entries.
+* **Interactive Leaflet Mapping**: Dynamically translates coordinates (latitude & longitude) returned by Gemini into map markers highlighting places of interest.
+* **High Accessibility (WCAG 2.1 Compliant)**: Full keyboard tab accessibility, focus-visible indicators, proper semantic headings, and ARIA roles.
+* **Ox-Clean Linter & Fast Build**: Standardized configuration compiling production builds in under 300ms with 0 errors and 0 linter warnings.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Technology Stack
 
-* **React 19**
-* **Vite**
-* **Tailwind CSS v4** (including Vite CSS engine compiler `@tailwindcss/vite`)
-* **Google Gemini API** (`fetch` endpoint with strict JSON schema options)
-* **Lucide React** (icons)
-* **JavaScript (ES Modules)**
+* **Frontend**: React 19, Vite, Leaflet.js (Interactive Maps), Lucide Icons, and Vanilla CSS variables for theming.
+* **Backend**: FastAPI, Uvicorn, Python 3, HTTPX, and python-dotenv.
+* **AI Model Engine**: Google Gemini 2.5 Flash API (Structured JSON Schema).
 
 ---
 
-## 📂 Project Structure
+## 📂 Folder Structure
 
 ```
-d:\PromptWars\
-├── .env.example
-├── .gitignore
-├── index.html
+d:\PromptWars Travel\
 ├── package.json
-├── README.md
-├── tailwind.config.js
 ├── vite.config.js
+├── tailwind.config.js
+├── netlify.toml
+├── README.md
+├── index.html
 ├── src/
 │   ├── main.jsx
 │   ├── App.jsx
 │   ├── index.css
 │   ├── components/
-│   │   ├── Common/
-│   │   │   ├── ThemeToggle.jsx
-│   │   │   ├── LoadingState.jsx
-│   │   │   └── ErrorState.jsx
-│   │   ├── FormSection.jsx
-│   │   ├── MealPlanDashboard.jsx
-│   │   ├── BudgetWidget.jsx
-│   │   ├── GroceryShoppingList.jsx
-│   │   └── SubstitutionPanel.jsx
+│   │   ├── InteractiveMap.jsx
+│   │   ├── ItineraryTimeline.jsx
+│   │   ├── HiddenGemsCard.jsx
+│   │   ├── FoodExplorer.jsx
+│   │   ├── EtiquetteEtc.jsx
+│   │   ├── BudgetTravelPlanner.jsx
+│   │   ├── LanguagePacker.jsx
+│   │   └── TravelJournalPostcard.jsx
 │   ├── services/
 │   │   └── gemini.js
 │   ├── hooks/
 │   │   └── useLocalStorage.js
-│   ├── utils/
-│   │   ├── validation.js
-│   │   └── helpers.js
-│   └── constants/
-│       └── options.js
+│   └── utils/
+│       └── helpers.js
+└── backend/
+    ├── requirements.txt
+    ├── README.md
+    └── app/
+        ├── main.py
+        ├── config.py
+        ├── schemas/
+        │   └── schemas.py
+        └── services/
+            └── gemini.py
 ```
 
 ---
 
-## ⚙️ Setup & Installation
+## ⚙️ Local Development & Setup
 
-### Prerequisite
-Obtain a free Google Gemini API key from [Google AI Studio](https://aistudio.google.com/).
-
-### 1. Install Dependencies
+### 1. Backend API Configuration
+Navigate to the `backend/` directory, set up your python virtual environment, and launch the API server:
 ```bash
+# Setup virtual environment
+python -m venv venv
+.\venv\Scripts\activate
+
+# Install backend dependencies
+pip install -r requirements.txt
+
+# Start the FastAPI server on port 8001 (matching frontend config)
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8001
+```
+Ensure your `backend/.env` file exists and has your Gemini key configured:
+```env
+GEMINI_API_KEY=your_gemini_key_here
+PORT=8001
+HOST=0.0.0.0
+```
+
+### 2. Frontend Setup
+Install npm packages and run the Vite client:
+```bash
+# Install packages
 npm install
-```
 
-### 2. Configure Credentials
-Create a `.env` file in the root directory:
-```bash
-VITE_GEMINI_API_KEY=your_actual_gemini_api_key_here
-```
-*Note: If the `.env` variable is not set, you can also paste the API key directly into the settings panel of the running application.*
-
-### 3. Run Locally
-Start the local development server:
-```bash
+# Start Vite dev server on port 5173
 npm run dev
 ```
-
-### 4. Build for Production
-Create the optimized static bundle in the `dist` folder:
-```bash
-npm run build
+Configure your `.env` file in the root directory:
+```env
+VITE_GEMINI_API_KEY=your_gemini_key_here
+VITE_API_BASE_URL=http://localhost:8001
 ```
 
 ---
 
 ## ☁️ Netlify Deployment
 
-Since ChefPlanner AI is a 100% serverless, client-side React 19 application, it can be deployed directly to Netlify without any server configurations.
+Since the frontend is a client-side React bundle, it deploys directly to Netlify.
 
-### Deploying via Netlify CLI
-1. Install Netlify CLI:
-   ```bash
-   npm install -g netlify-cli
-   ```
-2. Build the project:
-   ```bash
-   npm run build
-   ```
-3. Deploy the build output:
-   ```bash
-   netlify deploy --prod --dir=dist
-   ```
-
-### Deploying via GitHub & Netlify Dashboard
-1. Push this project to a GitHub repository.
-2. Link the repository in the Netlify Dashboard.
-3. Configure build settings:
+1. Set up build configurations in Netlify:
    * **Build command**: `npm run build`
    * **Publish directory**: `dist`
-4. Set Environment Variables in Netlify Settings:
-   * Add `VITE_GEMINI_API_KEY` under *Site configuration > Environment variables*.
+2. Add the environment variables:
+   * `VITE_API_BASE_URL`: The public-facing endpoint (or ngrok URL) of your FastAPI backend.
