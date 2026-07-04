@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Languages, Briefcase, Volume2, Cloud, CheckSquare, Square, RefreshCw } from 'lucide-react';
+import { Languages, Briefcase, Volume2, CheckSquare, Square, RefreshCw } from 'lucide-react';
 
 export default function LanguagePacker({ packing, localPhrases }) {
   const [checkedItems, setCheckedItems] = useState({});
@@ -25,57 +25,84 @@ export default function LanguagePacker({ packing, localPhrases }) {
       
       {/* 1. Smart Packing Checklist (6 cols) */}
       {hasPacking && (
-        <div className="lg:col-span-6 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-6 explorer-card" style={{ padding: '28px 32px' }}>
           
-          <div className="flex flex-wrap justify-between items-center gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                <Briefcase className="w-4 h-4" />
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12, borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'var(--accent-subtle)', border: '1px solid rgba(184, 134, 11, 0.2)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--accent)',
+              }}>
+                <Briefcase size={16} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-display">
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
                   Smart Packing Checklist
                 </h3>
-                <p className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
-                  Weather-responsive checklists generated for your trip.
+                <p style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)', fontFamily: "'Outfit', sans-serif", margin: '2px 0 0' }}>
+                  Weather-responsive expedition packing checklist
                 </p>
               </div>
             </div>
 
             <button 
               onClick={resetChecklist}
-              className="text-[10px] font-extrabold text-slate-400 dark:text-zinc-500 hover:text-amber-500 flex items-center gap-1 transition-colors cursor-pointer"
+              style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                fontSize: '0.68rem', fontWeight: 800, color: 'var(--text-faint)',
+                fontFamily: "'Outfit', sans-serif", display: 'flex', alignItems: 'center', gap: 4,
+                textTransform: 'uppercase', letterSpacing: '0.04em',
+              }}
+              className="focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:outline-none"
             >
-              <RefreshCw className="w-3 h-3" />
-              Reset Checked
+              <RefreshCw size={11} />
+              Clear items
             </button>
           </div>
 
-          {/* Interactive Checkable items */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[300px] overflow-y-auto pr-1">
-            {packing.map((item, idx) => {
-              const isChecked = !!checkedItems[item];
-              return (
-                <button
-                  key={idx}
-                  onClick={() => toggleCheck(item)}
-                  className={`flex items-start gap-2.5 p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    isChecked
-                      ? 'bg-slate-50 dark:bg-zinc-950/20 border-slate-200/50 dark:border-zinc-900 text-slate-450 dark:text-zinc-500 line-through decoration-slate-400/50'
-                      : 'bg-white dark:bg-zinc-950/60 border-slate-100 dark:border-zinc-900/60 text-slate-700 dark:text-zinc-350 hover:bg-slate-50/50 dark:hover:bg-zinc-900/50 hover:border-amber-500/30'
-                  }`}
-                >
-                  <span className="shrink-0 mt-0.5 text-amber-500">
-                    {isChecked ? (
-                      <CheckSquare className="w-4 h-4 fill-amber-500/10" />
-                    ) : (
-                      <Square className="w-4 h-4" />
-                    )}
-                  </span>
-                  <span className="text-xs font-semibold leading-tight">{item}</span>
-                </button>
-              );
-            })}
+          {/* Rules style list */}
+          <div className="notebook-ruled" style={{ maxHeight: 310, overflowY: 'auto', borderRadius: 12, border: '1px solid var(--border)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {packing.map((item, idx) => {
+                const isChecked = !!checkedItems[item];
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => toggleCheck(item)}
+                    style={{
+                      width: '100%',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: '1px solid rgba(184, 134, 11, 0.08)',
+                      padding: '8px 12px 8px 48px',
+                      textAlign: 'left',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12,
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      color: isChecked ? 'var(--text-faint)' : 'var(--text-secondary)',
+                      textDecoration: isChecked ? 'line-through' : 'none',
+                      fontFamily: "'Outfit', sans-serif",
+                      fontWeight: 650,
+                      minHeight: 28,
+                    }}
+                    className="focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:outline-none"
+                  >
+                    <span style={{ color: 'var(--accent)', marginLeft: -32, display: 'flex', alignItems: 'center' }}>
+                      {isChecked ? (
+                        <CheckSquare size={16} />
+                      ) : (
+                        <Square size={16} />
+                      )}
+                    </span>
+                    <span>{item}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
         </div>
@@ -83,58 +110,68 @@ export default function LanguagePacker({ packing, localPhrases }) {
 
       {/* 2. Local Language Assistant (6 cols) */}
       {hasPhrases && (
-        <div className="lg:col-span-6 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="lg:col-span-6 explorer-card" style={{ padding: '28px 32px' }}>
           
-          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-3">
-            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-              <Languages className="w-4 h-4" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: 'var(--accent-subtle)', border: '1px solid rgba(184, 134, 11, 0.2)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--accent)',
+            }}>
+              <Languages size={16} />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-display">
-                Local Language Assistant
+              <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.25rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>
+                Language Assistant
               </h3>
-              <p className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
-                Key phrases, pronunciations, meanings, and practical examples.
+              <p style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--text-muted)', fontFamily: "'Outfit', sans-serif", margin: '2px 0 0' }}>
+                Key vocabulary, phonetic pronunciation, and usage
               </p>
             </div>
           </div>
 
           {/* List of Phrases */}
-          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxHeight: 310, overflowY: 'auto', paddingRight: 4 }}>
             {localPhrases.map((phrase, idx) => (
               <div 
                 key={idx} 
-                className="bg-slate-50 dark:bg-zinc-950/60 border border-slate-100 dark:border-zinc-900/60 p-4 rounded-2xl hover:border-indigo-500/40 transition-all duration-300 group"
+                className="collectible-card"
+                style={{
+                  padding: '16px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                }}
               >
-                <div className="flex flex-wrap justify-between items-center gap-2 border-b border-slate-200/40 dark:border-zinc-800/40 pb-2 mb-2">
-                  {/* Local Phrase & English Meaning */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', justifyBetween: 'space-between', alignItems: 'flex-start', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: 8, gap: 8 }}>
                   <div>
-                    <span className="text-[10px] font-black uppercase text-indigo-500 tracking-wider">
-                      Phrase
+                    <span style={{ fontSize: '0.55rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--accent)', letterSpacing: '0.08em', fontFamily: "'Outfit', sans-serif" }}>
+                      Local Phrase
                     </span>
-                    <h4 className="text-sm font-black text-slate-850 dark:text-zinc-100 font-display group-hover:text-indigo-500 transition-colors">
+                    <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: '1.05rem', fontWeight: 800, color: 'var(--text)', margin: '2px 0 0' }}>
                       {phrase.phrase}
                     </h4>
                   </div>
                   
-                  {/* Meaning translation */}
-                  <div className="text-right">
-                    <span className="text-[9px] font-bold text-slate-400 dark:text-zinc-500 uppercase">
-                      Meaning
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.55rem', fontWeight: 900, textTransform: 'uppercase', color: 'var(--text-faint)', letterSpacing: '0.08em', fontFamily: "'Outfit', sans-serif" }}>
+                      English
                     </span>
-                    <div className="text-xs font-bold text-slate-700 dark:text-zinc-300">
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'Outfit', sans-serif", marginTop: 2 }}>
                       "{phrase.meaning}"
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[10px] font-semibold text-slate-450 dark:text-zinc-500 leading-normal">
-                  <div className="flex items-center gap-1.5">
-                    <Volume2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                    <span>🗣️ Pronounce: <code className="bg-zinc-200/50 dark:bg-zinc-900 px-1 py-0.5 rounded text-indigo-600 dark:text-indigo-400 font-bold">{phrase.pronunciation}</code></span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 8, fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Volume2 size={13} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+                    <span>🗣️ Pronounce: <code style={{ background: 'var(--bg-muted)', padding: '2px 6px', borderRadius: 4, color: 'var(--accent)', fontWeight: 800, fontFamily: 'monospace' }}>{phrase.pronunciation}</code></span>
                   </div>
                   <div>
-                    <span className="text-slate-600 dark:text-zinc-400 font-bold">Usage:</span> {phrase.usageExample}
+                    <strong style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 700, color: 'var(--text)' }}>Usage context: </strong>
+                    <span style={{ fontStyle: 'italic' }}>{phrase.usageExample}</span>
                   </div>
                 </div>
 

@@ -1,106 +1,151 @@
 import React from 'react';
-import { Globe, Calendar, CheckCircle2, XCircle, Camera, Shirt, Coins, ShieldAlert, MapPin } from 'lucide-react';
+import { Globe, Calendar, CheckCircle2, XCircle, Camera, Coins, ShieldAlert, MapPin } from 'lucide-react';
 
-export default function EtiquetteEtc({ culture, events }) {
+export default function EtiquetteEtc({ culture, events, safetyTips }) {
   const hasCulture = !!culture;
   const hasEvents = events && events.length > 0;
+  const hasSafetyTips = safetyTips && safetyTips.length > 0;
 
-  if (!hasCulture && !hasEvents) return null;
+  if (!hasCulture && !hasEvents && !hasSafetyTips) return null;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
       
-      {/* 1. Cultural Etiquette (8 cols) */}
+      {/* 1. Cultural Etiquette & Customs */}
       {hasCulture && (
-        <div className="lg:col-span-8 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-6">
+        <div className="explorer-card" style={{ padding: '28px 32px' }}>
           
-          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-4">
-            <div className="w-8 h-8 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-500">
+          <div className="section-header">
+            <div className="section-icon" style={{ background: 'rgba(109, 47, 160, 0.1)', color: '#6B2FA0', borderColor: 'rgba(109, 47, 160, 0.2)' }}>
               <Globe className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-display">
-                Cultural Etiquette & Customs
-              </h3>
-              <p className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
-                Essential guidelines to respect local culture, norms, and ensure safety.
+              <h3 className="section-title">Cultural Etiquette &amp; Customs</h3>
+              <p className="section-subtitle">
+                Local rules, dress codes, tipping standards, and social greetings
               </p>
             </div>
           </div>
 
-          {/* Core Etiquette Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {/* Greetings & Customs */}
-            <div className="bg-slate-50 dark:bg-zinc-950/60 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900/60 space-y-2">
-              <h4 className="text-xs font-black uppercase text-violet-500 tracking-wider flex items-center gap-1.5">
-                👋 Greetings & Customs
-              </h4>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed">
-                <strong className="text-slate-900 dark:text-zinc-100">Greetings:</strong> {culture.greetings}
-              </p>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed">
-                <strong className="text-slate-900 dark:text-zinc-100">Customs:</strong> {culture.customs}
-              </p>
-            </div>
-
-            {/* Dress Code & Photography */}
-            <div className="bg-slate-50 dark:bg-zinc-950/60 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900/60 space-y-2">
-              <h4 className="text-xs font-black uppercase text-violet-500 tracking-wider flex items-center gap-1.5">
-                👗 Dress & Photography
-              </h4>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed">
-                <strong className="text-slate-900 dark:text-zinc-100">Dress:</strong> {culture.dress}
-              </p>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed flex items-start gap-1">
-                <Camera className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                <span>{culture.photographyRules}</span>
-              </p>
-            </div>
-
-            {/* Tipping & Safety */}
-            <div className="bg-slate-50 dark:bg-zinc-950/60 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900/60 space-y-2">
-              <h4 className="text-xs font-black uppercase text-violet-500 tracking-wider flex items-center gap-1.5">
-                💵 Services & Safety
-              </h4>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed flex items-start gap-1">
-                <Coins className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                <span><strong className="text-slate-900 dark:text-zinc-100">Tipping:</strong> {culture.tipping}</span>
-              </p>
-              <p className="text-xs font-semibold text-slate-700 dark:text-zinc-300 leading-relaxed flex items-start gap-1">
-                <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                <span><strong className="text-slate-900 dark:text-zinc-100">Safety:</strong> {culture.safety}</span>
-              </p>
-            </div>
-
-            {/* Do's & Don'ts Checklist */}
-            <div className="bg-slate-50 dark:bg-zinc-950/60 p-4 rounded-2xl border border-slate-100 dark:border-zinc-900/60 grid grid-cols-2 gap-3">
-              <div>
-                <h5 className="text-[10px] font-black uppercase text-emerald-500 tracking-wider flex items-center gap-1 mb-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> Do's
-                </h5>
-                <ul className="space-y-1.5">
-                  {culture.dos?.slice(0, 3).map((item, idx) => (
-                    <li key={idx} className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400 leading-normal flex items-start gap-1">
-                      <span className="text-emerald-500 shrink-0">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+            {/* Left page: customs and dress code */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Greetings */}
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 18, borderRadius: 14 }}>
+                <h4 style={{
+                  fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+                  color: 'var(--accent)', letterSpacing: '0.08em',
+                  fontFamily: "'Outfit', sans-serif", marginBottom: 8,
+                }}>
+                  👋 Greetings &amp; Gestures
+                </h4>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.05rem', fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  {culture.greetings}
+                </p>
               </div>
-              
-              <div>
-                <h5 className="text-[10px] font-black uppercase text-rose-500 tracking-wider flex items-center gap-1 mb-1.5">
-                  <XCircle className="w-3.5 h-3.5 text-rose-500" /> Don'ts
-                </h5>
-                <ul className="space-y-1.5">
-                  {culture.donts?.slice(0, 3).map((item, idx) => (
-                    <li key={idx} className="text-[11px] font-semibold text-slate-600 dark:text-zinc-400 leading-normal flex items-start gap-1">
-                      <span className="text-rose-500 shrink-0">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+
+              {/* General Customs */}
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 18, borderRadius: 14 }}>
+                <h4 style={{
+                  fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+                  color: 'var(--accent)', letterSpacing: '0.08em',
+                  fontFamily: "'Outfit', sans-serif", marginBottom: 8,
+                }}>
+                  🌐 General Customs
+                </h4>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.05rem', fontStyle: 'italic', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  {culture.customs}
+                </p>
+              </div>
+
+              {/* Dress Code & Photography */}
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 18, borderRadius: 14 }}>
+                <h4 style={{
+                  fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+                  color: 'var(--accent)', letterSpacing: '0.08em',
+                  fontFamily: "'Outfit', sans-serif", marginBottom: 8,
+                  display: 'flex', alignItems: 'center', gap: 6
+                }}>
+                  👗 Dress &amp; Photography
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <div><strong style={{ color: 'var(--text)', fontFamily: "'Outfit', sans-serif" }}>Dress: </strong>{culture.dress}</div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                    <Camera size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
+                    <span>{culture.photographyRules}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right page: do's & don'ts, services */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Tipping & Services */}
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 18, borderRadius: 14 }}>
+                <h4 style={{
+                  fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+                  color: 'var(--accent)', letterSpacing: '0.08em',
+                  fontFamily: "'Outfit', sans-serif", marginBottom: 8,
+                  display: 'flex', alignItems: 'center', gap: 6
+                }}>
+                  💵 Services &amp; Tipping
+                </h4>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'flex-start', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <Coins size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />
+                  <span>{culture.tipping}</span>
+                </div>
+              </div>
+
+              {/* Do's & Don'ts Checklist */}
+              <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 18, borderRadius: 14 }}>
+                <h4 style={{
+                  fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+                  color: 'var(--text)', letterSpacing: '0.08em',
+                  fontFamily: "'Outfit', sans-serif", marginBottom: 12,
+                }}>
+                  🎭 Behavior Protocol
+                </h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <h5 style={{
+                      fontSize: '0.62rem', fontWeight: 900, textTransform: 'uppercase',
+                      color: '#4A7C2F', letterSpacing: '0.06em',
+                      display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8,
+                      fontFamily: "'Outfit', sans-serif",
+                    }}>
+                      <CheckCircle2 size={12} /> Do's
+                    </h5>
+                    <ul style={{ padding: 0, margin: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {culture.dos?.slice(0, 4).map((item, idx) => (
+                        <li key={idx} style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                          <span style={{ color: '#4A7C2F', fontWeight: 'bold' }}>✓</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h5 style={{
+                      fontSize: '0.62rem', fontWeight: 900, textTransform: 'uppercase',
+                      color: '#C0392B', letterSpacing: '0.06em',
+                      display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8,
+                      fontFamily: "'Outfit', sans-serif",
+                    }}>
+                      <XCircle size={12} /> Don'ts
+                    </h5>
+                    <ul style={{ padding: 0, margin: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {culture.donts?.slice(0, 4).map((item, idx) => (
+                        <li key={idx} style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                          <span style={{ color: '#C0392B', fontWeight: 'bold' }}>✗</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -108,45 +153,116 @@ export default function EtiquetteEtc({ culture, events }) {
         </div>
       )}
 
-      {/* 2. Local Events (4 cols) */}
+      {/* 2. Local Events */}
       {hasEvents && (
-        <div className="lg:col-span-4 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="explorer-card" style={{ padding: '28px 32px' }}>
           
-          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-4">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+          <div className="section-header">
+            <div className="section-icon" style={{ background: 'rgba(26, 39, 68, 0.1)', color: '#2D3F6B', borderColor: 'rgba(26, 39, 68, 0.2)' }}>
               <Calendar className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-display">
-                Local Events
-              </h3>
-              <p className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
-                Seasonal festivals, markets, and musical performances.
+              <h3 className="section-title">Local Events &amp; Festivals</h3>
+              <p className="section-subtitle">
+                Seasonal gatherings, musical performance, and street markets matching your calendar dates
               </p>
             </div>
           </div>
 
-          <div className="space-y-3.5 max-h-[360px] overflow-y-auto pr-1">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
             {events.map((ev, idx) => (
               <div 
                 key={idx} 
-                className="bg-slate-50 dark:bg-zinc-950/60 border border-slate-100 dark:border-zinc-900/60 p-4 rounded-2xl hover:border-blue-500/40 transition-all duration-300 group"
+                className="collectible-card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  padding: '20px 24px',
+                }}
               >
-                <div className="flex flex-wrap justify-between items-center gap-1.5 mb-1 text-[10px] font-extrabold uppercase">
-                  <span className="bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded-full">
-                    {ev.type || 'Event'}
-                  </span>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <span className="badge badge-navy">
+                      {ev.type || 'Seasonal Event'}
+                    </span>
+                  </div>
+
+                  <h4 style={{
+                    fontFamily: "'Playfair Display', serif",
+                    fontSize: '1.15rem', fontWeight: 800,
+                    color: 'var(--text)', margin: '0 0 8px',
+                    lineHeight: 1.25,
+                  }}>
+                    {ev.name}
+                  </h4>
+                  <p style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: '1rem', fontStyle: 'italic',
+                    color: 'var(--text-secondary)',
+                    lineHeight: 1.5,
+                    marginBottom: 16,
+                  }}>
+                    "{ev.description}"
+                  </p>
                 </div>
-                <h4 className="text-xs font-extrabold text-slate-800 dark:text-zinc-100 group-hover:text-blue-500 transition-colors mb-1.5">
-                  {ev.name}
-                </h4>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 font-semibold leading-relaxed mb-2">
-                  {ev.description}
-                </p>
-                <div className="flex items-center gap-1 text-[9px] font-bold text-slate-400 dark:text-zinc-500">
-                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+
+                <div style={{
+                  borderTop: '1px solid var(--border)',
+                  paddingTop: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: '0.72rem',
+                  color: 'var(--text-muted)',
+                  fontFamily: "'Outfit', sans-serif",
+                }}>
+                  <MapPin size={12} style={{ color: '#C0392B', flexShrink: 0 }} />
                   <span className="truncate">{ev.location}</span>
                 </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      )}
+
+      {/* 3. Safety Tips */}
+      {hasSafetyTips && (
+        <div className="explorer-card" style={{ padding: '28px 32px' }}>
+          
+          <div className="section-header">
+            <div className="section-icon" style={{ background: 'rgba(218, 165, 32, 0.1)', color: 'var(--accent)', borderColor: 'rgba(218, 165, 32, 0.2)' }}>
+              <ShieldAlert className="w-4 h-4 animate-bounce" />
+            </div>
+            <div>
+              <h3 className="section-title">Safety &amp; Emergency Warnings</h3>
+              <p className="section-subtitle">
+                Local safety guidelines and critical alerts for peace of mind during your stay
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+            {safetyTips.map((tip, idx) => (
+              <div
+                key={idx}
+                className="deckled-border"
+                style={{
+                  background: 'rgba(192, 57, 43, 0.03)',
+                  border: '1.5px solid rgba(192, 57, 43, 0.2)',
+                  borderRadius: 14,
+                  padding: 16,
+                  fontSize: '0.78rem',
+                  color: 'var(--text-secondary)',
+                  lineHeight: 1.5,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                }}
+              >
+                <ShieldAlert size={16} style={{ color: '#C0392B', flexShrink: 0, marginTop: 1 }} />
+                <span>{tip}</span>
               </div>
             ))}
           </div>

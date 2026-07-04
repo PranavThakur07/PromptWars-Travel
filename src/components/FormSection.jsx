@@ -1,378 +1,264 @@
 import React, { useState } from 'react';
-import { 
-  Compass, 
-  Calendar, 
-  DollarSign, 
-  Users, 
-  Globe, 
-  Accessibility, 
-  AlertTriangle, 
-  RefreshCw,
-  Info,
-  Check
-} from 'lucide-react';
-import { TRAVEL_STYLES, INTERESTS, ACCESSIBILITY_OPTIONS, LANGUAGE_OPTIONS } from '../constants/options';
+import { MapPin, Calendar, DollarSign, Users, Compass } from 'lucide-react';
 
-export default function FormSection({ 
-  onSubmit, 
-  onReset, 
-  isLoading, 
-  initialValues 
-}) {
-  const [formData, setFormData] = useState(initialValues || {
-    destination: '',
-    startDate: '',
-    endDate: '',
-    budget: 1500,
-    travelers: 2,
-    travelStyle: 'Solo',
-    interests: ['Food', 'History'],
-    accessibilityNeeds: 'None',
-    languages: 'English'
+const TRAVEL_STYLES = [
+  { value: 'Solo',      emoji: '🧳' },
+  { value: 'Couple',    emoji: '💑' },
+  { value: 'Family',    emoji: '👨‍👩‍👧‍👦' },
+  { value: 'Friends',   emoji: '🫂' },
+  { value: 'Adventure', emoji: '⛺' },
+  { value: 'Business',  emoji: '💼' },
+];
+
+const INTERESTS_LIST = [
+  { label: 'History',      emoji: '🏛️' },
+  { label: 'Food',         emoji: '🍜' },
+  { label: 'Art',          emoji: '🎨' },
+  { label: 'Nature',       emoji: '🌿' },
+  { label: 'Architecture', emoji: '🏰' },
+  { label: 'Music',        emoji: '🎵' },
+  { label: 'Shopping',     emoji: '🛍️' },
+  { label: 'Festivals',    emoji: '🎊' },
+  { label: 'Local Life',   emoji: '🏘️' },
+  { label: 'Nightlife',    emoji: '🌙' },
+  { label: 'Photography',  emoji: '📸' },
+  { label: 'Wellness',     emoji: '🧘' },
+];
+
+const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Japanese', 'Mandarin', 'Arabic', 'Portuguese', 'Italian', 'Hindi'];
+
+export default function FormSection({ onSubmit, isLoading, initialValues, heroMode, compact }) {
+  const [form, setForm] = useState({
+    destination:   initialValues?.destination   || '',
+    startDate:     initialValues?.startDate     || '',
+    endDate:       initialValues?.endDate       || '',
+    budget:        initialValues?.budget        || '',
+    travelers:     initialValues?.travelers     || 2,
+    travelStyle:   initialValues?.travelStyle   || 'Couple',
+    interests:     initialValues?.interests     || ['History', 'Food'],
+    language:      initialValues?.language      || 'English',
+    accessibility: initialValues?.accessibility || '',
   });
-  
+
   const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    // Clear validation error on change
-    if (errors[name]) {
-      setErrors(prev => {
-        const copy = { ...prev };
-        delete copy[name];
-        return copy;
-      });
-    }
-  };
+  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
-  const handleStyleSelect = (styleValue) => {
-    setFormData(prev => ({ ...prev, travelStyle: styleValue }));
-  };
-
-  const handleInterestToggle = (interestValue) => {
-    setFormData(prev => {
-      const current = prev.interests;
-      const updated = current.includes(interestValue)
-        ? current.filter(i => i !== interestValue)
-        : [...current, interestValue];
-      
-      return { ...prev, interests: updated };
-    });
+  const toggleInterest = (label) => {
+    set('interests', form.interests.includes(label)
+      ? form.interests.filter(i => i !== label)
+      : [...form.interests, label]
+    );
   };
 
   const validate = () => {
-    const newErrors = {};
-    if (!formData.destination.trim()) {
-      newErrors.destination = 'Destination is required.';
-    }
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required.';
-    }
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required.';
-    } else if (formData.startDate && newErrors.startDate === undefined) {
-      const start = new Date(formData.startDate);
-      const end = new Date(formData.endDate);
-      if (end < start) {
-        newErrors.endDate = 'End date cannot be earlier than start date.';
-      }
-    }
-    if (Number(formData.budget) <= 0) {
-      newErrors.budget = 'Budget must be greater than 0.';
-    }
-    if (Number(formData.travelers) <= 0) {
-      newErrors.travelers = 'Travelers count must be at least 1.';
-    }
-    if (!formData.interests.length) {
-      newErrors.interests = 'Please select at least one interest.';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const e = {};
+    if (!form.destination.trim()) e.destination = 'Where would you like to go?';
+    if (!form.startDate)          e.startDate   = 'When does your journey begin?';
+    if (!form.endDate)            e.endDate     = 'When does your journey end?';
+    if (!form.budget || Number(form.budget) <= 0) e.budget = 'Enter your travel budget';
+    if (form.interests.length === 0)  e.interests = 'Choose at least one interest';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) {
-      const firstErrorKey = Object.keys(errors)[0];
-      const el = document.getElementById(firstErrorKey);
-      if (el) el.focus();
-      return;
-    }
-    onSubmit(formData);
+    if (!validate()) return;
+    onSubmit({
+      ...form,
+      budget:    Number(form.budget),
+      travelers: Number(form.travelers),
+    });
   };
 
-  const handleClear = () => {
-    const defaults = {
-      destination: '',
-      startDate: '',
-      endDate: '',
-      budget: 1500,
-      travelers: 2,
-      travelStyle: 'Solo',
-      interests: ['Food', 'History'],
-      accessibilityNeeds: 'None',
-      languages: 'English'
-    };
-    setFormData(defaults);
-    setErrors({});
-    onReset();
-  };
+  // Style classes based on mode
+  const inputCls  = heroMode ? 'hero-input'       : 'explorer-input';
+  const labelCls  = heroMode ? 'hero-label'       : 'explorer-label';
+  const tagCls    = heroMode ? 'hero-tag'         : 'interest-tag';
+  const tagSelCls = heroMode ? 'hero-tag-selected': 'interest-selected';
+  const pillCls   = heroMode ? 'hero-style-pill'  : 'style-pill';
+  const pillSelCls= heroMode ? 'hero-style-selected' : 'style-selected';
+  const errColor  = heroMode ? 'rgba(255,100,100,0.8)' : '#C0392B';
+
+  const inputStyle = heroMode ? {} : {};
+  const selectBg   = heroMode
+    ? { background: 'rgba(255,255,255,0.06)', color: 'rgba(245,230,200,0.9)' }
+    : { background: 'var(--bg-input)', color: 'var(--text)' };
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 md:p-8 shadow-sm transition-all">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        
-        {/* Destination */}
-        <div>
-          <label htmlFor="destination" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-            <Compass className="w-4 h-4 text-violet-500" />
-            Where would you like to explore?
-          </label>
-          <input
-            id="destination"
-            name="destination"
-            type="text"
-            required
-            placeholder="e.g. Kyoto, Japan or Rome, Italy"
-            value={formData.destination}
-            onChange={handleInputChange}
-            className={`w-full bg-slate-50 dark:bg-zinc-950 border ${errors.destination ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-zinc-800 focus:ring-violet-500'} rounded-2xl px-4 py-3 text-slate-850 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold`}
-          />
-          {errors.destination && (
-            <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-              <AlertTriangle className="w-3.5 h-3.5" /> {errors.destination}
+    <form onSubmit={handleSubmit} noValidate>
+      {!compact && (
+        <div style={{
+          textAlign: 'center', marginBottom: 22,
+        }}>
+          <div style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: heroMode ? '1.3rem' : '1.1rem',
+            fontWeight: 700,
+            color: heroMode ? 'rgba(245,230,200,0.9)' : 'var(--text)',
+            marginBottom: 4,
+          }}>
+            🗺️ Where would you like to explore?
+          </div>
+          {heroMode && (
+            <p style={{ fontSize: '0.78rem', color: 'rgba(212,184,150,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+              Tell Gemini your dream and it will craft your complete cultural guide.
             </p>
           )}
         </div>
+      )}
 
-        {/* Start and End Dates */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: compact ? 12 : 18 }}>
+
+        {/* Destination */}
+        <div>
+          <label className={labelCls}>
+            <MapPin size={11} /> Destination
+          </label>
+          <input
+            className={inputCls}
+            type="text"
+            placeholder="e.g. Kyoto, Japan · Marrakech, Morocco · Cusco, Peru"
+            value={form.destination}
+            onChange={e => set('destination', e.target.value)}
+            style={inputStyle}
+          />
+          {errors.destination && <div style={{ fontSize: '0.7rem', color: errColor, marginTop: 5, fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>{errors.destination}</div>}
+        </div>
+
+        {/* Dates */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label htmlFor="startDate" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-violet-500" />
-              Start Date
-            </label>
-            <input
-              id="startDate"
-              name="startDate"
-              type="date"
-              required
-              value={formData.startDate}
-              onChange={handleInputChange}
-              className={`w-full bg-slate-50 dark:bg-zinc-950 border ${errors.startDate ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-zinc-800 focus:ring-violet-500'} rounded-2xl px-4 py-3 text-slate-805 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold`}
-            />
-            {errors.startDate && (
-              <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-                <AlertTriangle className="w-3.5 h-3.5" /> {errors.startDate}
-              </p>
-            )}
+            <label className={labelCls}><Calendar size={11} /> From</label>
+            <input className={inputCls} type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} style={{ ...selectBg }} />
+            {errors.startDate && <div style={{ fontSize: '0.7rem', color: errColor, marginTop: 5, fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>{errors.startDate}</div>}
           </div>
-
           <div>
-            <label htmlFor="endDate" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-violet-500" />
-              End Date
-            </label>
-            <input
-              id="endDate"
-              name="endDate"
-              type="date"
-              required
-              value={formData.endDate}
-              onChange={handleInputChange}
-              className={`w-full bg-slate-50 dark:bg-zinc-950 border ${errors.endDate ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-zinc-800 focus:ring-violet-500'} rounded-2xl px-4 py-3 text-slate-805 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold`}
-            />
-            {errors.endDate && (
-              <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-                <AlertTriangle className="w-3.5 h-3.5" /> {errors.endDate}
-              </p>
-            )}
+            <label className={labelCls}><Calendar size={11} /> Until</label>
+            <input className={inputCls} type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} style={{ ...selectBg }} />
+            {errors.endDate && <div style={{ fontSize: '0.7rem', color: errColor, marginTop: 5, fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>{errors.endDate}</div>}
           </div>
         </div>
 
-        {/* Travelers & Budget */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Budget & Travelers */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label htmlFor="travelers" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <Users className="w-4 h-4 text-violet-500" />
-              Travelers
-            </label>
+            <label className={labelCls}><DollarSign size={11} /> Budget (USD)</label>
             <input
-              id="travelers"
-              name="travelers"
-              type="number"
-              min="1"
-              max="50"
-              required
-              value={formData.travelers}
-              onChange={handleInputChange}
-              className={`w-full bg-slate-50 dark:bg-zinc-950 border ${errors.travelers ? 'border-rose-500' : 'border-slate-200 dark:border-zinc-800 focus:ring-violet-500'} rounded-2xl px-4 py-3 text-slate-850 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold`}
+              className={inputCls} type="number" min="1"
+              placeholder="e.g. 1500"
+              value={form.budget}
+              onChange={e => set('budget', e.target.value)}
+              style={inputStyle}
             />
-            {errors.travelers && (
-              <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-                <AlertTriangle className="w-3.5 h-3.5" /> {errors.travelers}
-              </p>
-            )}
+            {errors.budget && <div style={{ fontSize: '0.7rem', color: errColor, marginTop: 5, fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>{errors.budget}</div>}
           </div>
-
           <div>
-            <label htmlFor="budget" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-violet-500" />
-              Allocated Budget (USD)
-            </label>
-            <input
-              id="budget"
-              name="budget"
-              type="number"
-              min="10"
-              max="100000"
-              required
-              value={formData.budget}
-              onChange={handleInputChange}
-              className={`w-full bg-slate-50 dark:bg-zinc-950 border ${errors.budget ? 'border-rose-500' : 'border-slate-200 dark:border-zinc-800 focus:ring-violet-500'} rounded-2xl px-4 py-3 text-slate-850 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold`}
-            />
-            {errors.budget && (
-              <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-                <AlertTriangle className="w-3.5 h-3.5" /> {errors.budget}
-              </p>
-            )}
+            <label className={labelCls}><Users size={11} /> Travelers</label>
+            <select
+              className={inputCls}
+              value={form.travelers}
+              onChange={e => set('travelers', e.target.value)}
+              style={{ ...selectBg }}
+            >
+              {[1,2,3,4,5,6,7,8,9,10].map(n => (
+                <option key={n} value={n} style={{ background: '#2C1810', color: '#F5E6C8' }}>{n} {n === 1 ? 'person' : 'people'}</option>
+              ))}
+            </select>
           </div>
         </div>
 
         {/* Travel Style */}
         <div>
-          <label className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-2.5">
-            Travel Style
-          </label>
-          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2.5">
-            {TRAVEL_STYLES.map((style) => (
+          <label className={labelCls}><Compass size={11} /> Travel Style</label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 6 }}>
+            {TRAVEL_STYLES.map(s => (
               <button
-                type="button"
-                key={style.value}
-                onClick={() => handleStyleSelect(style.value)}
-                className={`text-center p-3 rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500 flex flex-col justify-center items-center ${
-                  formData.travelStyle === style.value
-                    ? 'bg-violet-500/5 dark:bg-violet-500/10 border-violet-500 text-violet-600 dark:text-violet-400 font-extrabold shadow-sm'
-                    : 'bg-slate-50 dark:bg-zinc-950 border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900'
-                }`}
+                key={s.value} type="button"
+                onClick={() => set('travelStyle', s.value)}
+                className={`${pillCls}${form.travelStyle === s.value ? ' ' + pillSelCls : ''}`}
+                style={{ minWidth: 0 }}
               >
-                <div className="text-xs font-black">{style.label}</div>
+                <span style={{ fontSize: '1.1rem' }}>{s.emoji}</span>
+                <span>{s.value}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Interests (Multi-select) */}
+        {/* Interests */}
         <div>
-          <label className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-2.5">
-            Interests (Select multiple)
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {INTERESTS.map((interest) => {
-              const isSelected = formData.interests.includes(interest.value);
-              return (
-                <button
-                  type="button"
-                  key={interest.value}
-                  onClick={() => handleInterestToggle(interest.value)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-xs font-bold transition-all cursor-pointer focus:outline-none ${
-                    isSelected
-                      ? 'bg-violet-500 text-white border-violet-500 shadow-md shadow-violet-500/20'
-                      : 'bg-slate-50 dark:bg-zinc-950 border-slate-200/80 dark:border-zinc-800/80 text-slate-655 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-900'
-                  }`}
-                >
-                  {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                  {interest.label}
-                </button>
-              );
-            })}
+          <label className={labelCls}>🎯 Interests</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {INTERESTS_LIST.map(({ label, emoji }) => (
+              <button
+                key={label} type="button"
+                onClick={() => toggleInterest(label)}
+                className={`${tagCls}${form.interests.includes(label) ? ' ' + tagSelCls : ''}`}
+              >
+                {emoji} {label}
+              </button>
+            ))}
           </div>
-          {errors.interests && (
-            <p className="text-xs text-rose-550 mt-1.5 flex items-center gap-1" role="alert">
-              <AlertTriangle className="w-3.5 h-3.5" /> {errors.interests}
-            </p>
+          {errors.interests && <div style={{ fontSize: '0.7rem', color: errColor, marginTop: 5, fontFamily: "'Outfit', sans-serif", fontWeight: 600 }}>{errors.interests}</div>}
+        </div>
+
+        {/* Language */}
+        <div>
+          <label className={labelCls}>🌐 Preferred Language</label>
+          <select
+            className={inputCls}
+            value={form.language}
+            onChange={e => set('language', e.target.value)}
+            style={{ ...selectBg }}
+          >
+            {LANGUAGES.map(l => (
+              <option key={l} value={l} style={{ background: '#2C1810', color: '#F5E6C8' }}>{l}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Accessibility (optional) */}
+        {!compact && (
+          <div>
+            <label className={labelCls}>♿ Accessibility Notes <span style={{ textTransform: 'none', fontWeight: 600, opacity: 0.6 }}>(optional)</span></label>
+            <input
+              className={inputCls} type="text"
+              placeholder="e.g. Wheelchair accessible routes preferred"
+              value={form.accessibility}
+              onChange={e => set('accessibility', e.target.value)}
+              style={inputStyle}
+            />
+          </div>
+        )}
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="btn-journey"
+          style={{ marginTop: compact ? 4 : 8 }}
+        >
+          {isLoading ? (
+            <>
+              <Compass size={18} className="spin-slow" />
+              Charting Course…
+            </>
+          ) : (
+            <>
+              <Compass size={18} />
+              {compact ? 'Re-generate Journey' : 'Discover My Journey'}
+            </>
           )}
-        </div>
+        </button>
 
-        {/* Languages & Accessibility Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Languages */}
-          <div>
-            <label htmlFor="languages" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <Globe className="w-4 h-4 text-violet-500" />
-              Preferred Language
-            </label>
-            <select
-              id="languages"
-              name="languages"
-              value={formData.languages}
-              onChange={handleInputChange}
-              className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 focus:ring-violet-500 rounded-2xl px-4 py-3 text-slate-805 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold"
-            >
-              {LANGUAGE_OPTIONS.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Accessibility */}
-          <div>
-            <label htmlFor="accessibilityNeeds" className="block text-sm font-bold text-slate-700 dark:text-zinc-300 mb-1.5 flex items-center gap-2">
-              <Accessibility className="w-4 h-4 text-violet-500" />
-              Accessibility Needs
-            </label>
-            <select
-              id="accessibilityNeeds"
-              name="accessibilityNeeds"
-              value={formData.accessibilityNeeds}
-              onChange={handleInputChange}
-              className="w-full bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 focus:ring-violet-500 rounded-2xl px-4 py-3 text-slate-850 dark:text-zinc-100 focus:outline-none focus:ring-2 transition-all font-semibold"
-            >
-              {ACCESSIBILITY_OPTIONS.map((acc) => (
-                <option key={acc.value} value={acc.value}>
-                  {acc.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-4 pt-4 border-t border-slate-100 dark:border-zinc-800/80">
-          <button
-            type="button"
-            onClick={handleClear}
-            disabled={isLoading}
-            className="flex-1 px-6 py-3.5 border border-slate-200 dark:border-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-700 dark:text-zinc-300 rounded-2xl font-bold transition-all focus:outline-none focus:ring-2 focus:ring-slate-350 disabled:opacity-50 cursor-pointer"
-          >
-            Reset Form
-          </button>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="flex-[2] flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-violet-600 to-indigo-650 hover:from-violet-750 hover:to-indigo-750 text-white rounded-2xl font-bold shadow-md hover:shadow-lg hover:shadow-violet-500/10 transition-all active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-950 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
-          >
-            {isLoading ? (
-              <>
-                <RefreshCw className="w-5 h-5 animate-spin" />
-                Planning Journey...
-              </>
-            ) : (
-              'Discover Culture'
-            )}
-          </button>
-        </div>
-
-      </form>
-    </div>
+        {!compact && !heroMode && (
+          <p style={{ textAlign: 'center', fontSize: '0.68rem', color: 'var(--text-faint)', fontFamily: "'Outfit', sans-serif", marginTop: -4 }}>
+            ✦ One click · One AI call · Your complete cultural guide
+          </p>
+        )}
+      </div>
+    </form>
   );
 }

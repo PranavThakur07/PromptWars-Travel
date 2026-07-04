@@ -5,8 +5,7 @@ export function useLocalStorage(key, initialValue) {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+    } catch {
       return initialValue;
     }
   });
@@ -14,8 +13,8 @@ export function useLocalStorage(key, initialValue) {
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {
-      console.warn(`Error writing localStorage key "${key}":`, error);
+    } catch {
+      // localStorage write failed (e.g. private browsing quota exceeded) — non-critical
     }
   }, [key, storedValue]);
 

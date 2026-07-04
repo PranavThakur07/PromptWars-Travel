@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Dict, Any
 from app.config import GEMINI_API_KEY
-from app.schemas.schemas import TravelRequest, TravelResponse
+from app.schemas.schemas import TravelRequest, TravelResponse, ItineraryActivity
 
 logger = logging.getLogger("culture_compass")
 
@@ -71,6 +71,31 @@ async def generate_trip_plan(request: TravelRequest) -> Dict[str, Any]:
     raw_schema = TravelResponse.model_json_schema()
     clean_schema = dereference_schema(raw_schema)
 
+    # Calculate number of days dynamically to insert Day 1...Day N schema
+    from datetime import datetime
+    try:
+        start_dt = datetime.strptime(request.startDate, "%Y-%m-%d")
+        end_dt = datetime.strptime(request.endDate, "%Y-%m-%d")
+        num_days = max(1, (end_dt - start_dt).days + 1)
+    except Exception:
+        num_days = 3
+
+    # Build dynamic schema for itinerary mapping Day 1 ... Day N
+    activity_schema = dereference_schema(ItineraryActivity.model_json_schema())
+    list_activity_schema = {
+        "type": "array",
+        "items": activity_schema
+    }
+    
+    itinerary_schema = {
+        "type": "object",
+        "properties": {
+            f"Day {i}": list_activity_schema for i in range(1, num_days + 1)
+        },
+        "required": [f"Day {i}" for i in range(1, num_days + 1)]
+    }
+    clean_schema["properties"]["itinerary"] = itinerary_schema
+
     # API Request configuration
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
     payload = {
@@ -118,13 +143,13 @@ async def generate_trip_plan(request: TravelRequest) -> Dict[str, Any]:
             parsed_json = json.loads(content_text)
             
             # Double check required fields exist (or fill default)
-            required_keys = ["story", "itinerary", "hiddenGems", "heritage", "food", "events", "culture", "budget", "packing", "localPhrases", "travelJournal", "instagramCaption"]
+            required_keys = ["story", "itinerary", "hiddenGems", "heritage", "food", "events", "culture", "budget", "packing", "localPhrases", "travelJournal", "instagramCaption", "safetyTips"]
             for key in required_keys:
                 if key not in parsed_json:
                     logger.warning(f"Key '{key}' was missing from Gemini response. Filling blank default.")
                     if key in ["itinerary", "culture", "budget"]:
                         parsed_json[key] = {}
-                    elif key in ["hiddenGems", "heritage", "food", "events", "packing", "localPhrases"]:
+                    elif key in ["hiddenGems", "heritage", "food", "events", "packing", "localPhrases", "safetyTips"]:
                         parsed_json[key] = []
                     else:
                         parsed_json[key] = ""

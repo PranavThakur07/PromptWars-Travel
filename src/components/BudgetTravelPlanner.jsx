@@ -1,5 +1,5 @@
 import React from 'react';
-import { PiggyBank, AlertTriangle, ChevronRight, DollarSign, Wallet } from 'lucide-react';
+import { PiggyBank, AlertTriangle, ChevronRight, Wallet } from 'lucide-react';
 
 export default function BudgetTravelPlanner({ budget, userBudget }) {
   if (!budget) return null;
@@ -16,72 +16,90 @@ export default function BudgetTravelPlanner({ budget, userBudget }) {
   const miscPct = totalCost ? Math.round((budget.miscellaneous / totalCost) * 100) : 0;
 
   return (
-    <div className="bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-6">
+    <div className="explorer-card" style={{ padding: '28px 32px' }}>
       
       {/* Header */}
-      <div className="flex items-center gap-2 border-b border-slate-100 dark:border-zinc-800/80 pb-4">
-        <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+      <div className="section-header">
+        <div className="section-icon" style={{ background: 'rgba(74, 124, 47, 0.1)', color: '#4A7C2F', borderColor: 'rgba(74, 124, 47, 0.2)' }}>
           <PiggyBank className="w-4 h-4" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-slate-800 dark:text-zinc-100 font-display">
-            Smart Budget Planner
-          </h3>
-          <p className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
-            Real-time estimation matching your allocated travel fund limits.
+          <h3 className="section-title">Smart Budget Planner</h3>
+          <p className="section-subtitle">
+            Financial analytics and resource allocations for your journey
           </p>
         </div>
       </div>
 
       {/* Financial Status Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4" style={{ marginBottom: 28 }}>
         
         {/* Allocated Budget */}
-        <div className="bg-slate-50 dark:bg-zinc-950/60 border border-slate-100 dark:border-zinc-900/60 p-4 rounded-2xl flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-200/50 dark:bg-zinc-900 flex items-center justify-center text-slate-600 dark:text-zinc-400 font-bold text-lg">
+        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 16, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 11,
+            background: 'var(--border)',
+            color: 'var(--text-secondary)',
+            fontWeight: 900, fontSize: '1.2rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
             $
           </div>
           <div>
-            <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <div style={{ fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-faint)', letterSpacing: '0.08em', fontFamily: "'Outfit', sans-serif" }}>
               Allocated Budget
             </div>
-            <div className="text-lg font-black text-slate-850 dark:text-zinc-100 font-display">
+            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', fontFamily: "'Outfit', sans-serif" }}>
               ${userBudget} USD
             </div>
           </div>
         </div>
 
         {/* Estimated Costs */}
-        <div className="bg-slate-50 dark:bg-zinc-950/60 border border-slate-100 dark:border-zinc-900/60 p-4 rounded-2xl flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 font-bold text-lg">
+        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 16, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 11,
+            background: 'var(--accent-subtle)',
+            color: 'var(--accent)',
+            fontWeight: 900, fontSize: '1.2rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '1px solid rgba(184, 134, 11, 0.2)'
+          }}>
             $
           </div>
           <div>
-            <div className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider">
+            <div style={{ fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-faint)', letterSpacing: '0.08em', fontFamily: "'Outfit', sans-serif" }}>
               Estimated Total
             </div>
-            <div className="text-lg font-black text-slate-850 dark:text-zinc-100 font-display">
+            <div style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', fontFamily: "'Outfit', sans-serif" }}>
               ${totalCost} USD
             </div>
           </div>
         </div>
 
         {/* Remaining Budget */}
-        <div className={`border p-4 rounded-2xl flex items-center gap-3 ${
-          isFeasible
-            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-            : 'bg-rose-500/5 border-rose-500/20 text-rose-600 dark:text-rose-400'
-        }`}>
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-lg ${
-            isFeasible ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-          }`}>
-            <Wallet className="w-5 h-5" />
+        <div style={{ 
+          background: isFeasible ? 'rgba(74, 124, 47, 0.04)' : 'rgba(192, 57, 43, 0.04)',
+          border: `1.5px solid ${isFeasible ? 'rgba(74, 124, 47, 0.2)' : 'rgba(192, 57, 43, 0.2)'}`,
+          padding: 16, borderRadius: 14, display: 'flex', alignItems: 'center', gap: 12
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 11,
+            background: isFeasible ? 'rgba(74, 124, 47, 0.1)' : 'rgba(192, 57, 43, 0.1)',
+            color: isFeasible ? '#4A7C2F' : '#C0392B',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Wallet size={18} />
           </div>
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-wider opacity-80">
+            <div style={{ 
+              fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', 
+              color: isFeasible ? '#4A7C2F' : '#C0392B',
+              letterSpacing: '0.08em', fontFamily: "'Outfit', sans-serif" 
+            }}>
               {isFeasible ? 'Remaining Balance' : 'Budget Deficit'}
             </div>
-            <div className="text-lg font-black font-display">
+            <div style={{ fontSize: '1.15rem', fontWeight: 850, color: isFeasible ? '#4A7C2F' : '#C0392B', fontFamily: "'Outfit', sans-serif" }}>
               ${Math.abs(remaining)} USD
             </div>
           </div>
@@ -90,74 +108,98 @@ export default function BudgetTravelPlanner({ budget, userBudget }) {
       </div>
 
       {/* CSS Visual Distribution Bar */}
-      <div className="space-y-2">
-        <div className="text-xs font-bold text-slate-650 dark:text-zinc-300">
-          Cost Breakdown Distribution
+      <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: 22, borderRadius: 14, marginBottom: 28 }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text)', letterSpacing: '0.06em', fontFamily: "'Outfit', sans-serif", marginBottom: 12 }}>
+          📊 Expense Distribution
         </div>
-        <div className="w-full h-4 rounded-full bg-slate-100 dark:bg-zinc-950 overflow-hidden flex">
-          {budget.transport > 0 && <div className="h-full bg-amber-500 transition-all" style={{ width: `${transportPct}%` }} title={`Transport: ${transportPct}%`} />}
-          {budget.food > 0 && <div className="h-full bg-emerald-500 transition-all" style={{ width: `${foodPct}%` }} title={`Food: ${foodPct}%`} />}
-          {budget.tickets > 0 && <div className="h-full bg-indigo-500 transition-all" style={{ width: `${ticketsPct}%` }} title={`Tickets: ${ticketsPct}%`} />}
-          {budget.shopping > 0 && <div className="h-full bg-pink-500 transition-all" style={{ width: `${shoppingPct}%` }} title={`Shopping: ${shoppingPct}%`} />}
-          {budget.miscellaneous > 0 && <div className="h-full bg-blue-400 transition-all" style={{ width: `${miscPct}%` }} title={`Misc: ${miscPct}%`} />}
+        
+        {/* Track */}
+        <div className="budget-bar-track" style={{ height: 16, background: 'var(--bg-muted)', display: 'flex', borderRadius: 99 }}>
+          {budget.transport > 0 && <div className="budget-bar-fill bg-amber-500" style={{ width: `${transportPct}%` }} title={`Transport: ${transportPct}%`} />}
+          {budget.food > 0 && <div className="budget-bar-fill bg-emerald-500" style={{ width: `${foodPct}%` }} title={`Dining: ${foodPct}%`} />}
+          {budget.tickets > 0 && <div className="budget-bar-fill bg-indigo-500" style={{ width: `${ticketsPct}%` }} title={`Sightseeing: ${ticketsPct}%`} />}
+          {budget.shopping > 0 && <div className="budget-bar-fill bg-pink-500" style={{ width: `${shoppingPct}%` }} title={`Shopping: ${shoppingPct}%`} />}
+          {budget.miscellaneous > 0 && <div className="budget-bar-fill bg-blue-400" style={{ width: `${miscPct}%` }} title={`Misc: ${miscPct}%`} />}
         </div>
 
         {/* Legend labels */}
-        <div className="flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-bold text-slate-400 dark:text-zinc-500 justify-center">
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-amber-500" /> Transport ({transportPct}%)</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-500" /> Dining ({foodPct}%)</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-indigo-500" /> Sightseeing ({ticketsPct}%)</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-pink-500" /> Shopping ({shoppingPct}%)</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-blue-400" /> Misc ({miscPct}%)</span>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 20px', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-secondary)', fontFamily: "'Outfit', sans-serif", marginTop: 14, justifyContent: 'center' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 3, background: '#F59E0B' }} /> Transport (${budget.transport} · {transportPct}%)</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 3, background: '#10B981' }} /> Dining (${budget.food} · {foodPct}%)</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 3, background: '#6366F1' }} /> Sightseeing (${budget.tickets} · {ticketsPct}%)</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 3, background: '#EC4899' }} /> Shopping (${budget.shopping} · {shoppingPct}%)</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 3, background: '#60A5FA' }} /> Misc (${budget.miscellaneous} · {miscPct}%)</span>
         </div>
       </div>
 
       {/* Warnings & Saving Alternatives */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Warnings list */}
-        <div className="space-y-3">
-          <div className="text-xs font-black uppercase text-amber-500 tracking-wider flex items-center gap-1">
-            <AlertTriangle className="w-4 h-4 text-amber-500" /> Budget Alerts
-          </div>
-          <ul className="space-y-2">
+        <div>
+          <h4 style={{
+            fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+            color: '#C0392B', letterSpacing: '0.08em',
+            fontFamily: "'Outfit', sans-serif", marginBottom: 12,
+            display: 'flex', alignItems: 'center', gap: 6
+          }}>
+            <AlertTriangle size={14} /> Financial Health Warnings
+          </h4>
+          <ul style={{ padding: 0, margin: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {budget.warnings && budget.warnings.length > 0 ? (
               budget.warnings.map((warn, idx) => (
                 <li 
                   key={idx} 
-                  className="text-xs font-semibold leading-relaxed bg-amber-500/5 text-amber-600 dark:text-amber-400 border border-amber-500/10 p-3 rounded-xl flex gap-2"
+                  style={{
+                    background: 'rgba(192, 57, 43, 0.03)',
+                    border: '1.5px solid rgba(192, 57, 43, 0.15)',
+                    padding: '12px 16px', borderRadius: 10,
+                    fontSize: '0.78rem', color: '#C0392B',
+                    lineHeight: 1.45, display: 'flex', gap: 8,
+                  }}
                 >
-                  <span className="shrink-0">•</span>
+                  <span style={{ fontWeight: 'bold' }}>•</span>
                   <span>{warn}</span>
                 </li>
               ))
             ) : (
-              <li className="text-xs font-semibold text-slate-400 dark:text-zinc-500 italic">
-                No financial warnings. Your itinerary fits beautifully.
+              <li style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                ✓ No budget constraints or warnings. Your allocated fund is healthy.
               </li>
             )}
           </ul>
         </div>
 
         {/* Alternatives list */}
-        <div className="space-y-3">
-          <div className="text-xs font-black uppercase text-indigo-500 tracking-wider flex items-center gap-1">
-            <PiggyBank className="w-4 h-4 text-indigo-500" /> Cheaper Alternatives
-          </div>
-          <ul className="space-y-2">
+        <div>
+          <h4 style={{
+            fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase',
+            color: '#4A7C2F', letterSpacing: '0.08em',
+            fontFamily: "'Outfit', sans-serif", marginBottom: 12,
+            display: 'flex', alignItems: 'center', gap: 6
+          }}>
+            <Wallet size={14} style={{ color: '#4A7C2F' }} /> Cost-Saving Alternatives
+          </h4>
+          <ul style={{ padding: 0, margin: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
             {budget.cheaperAlternatives && budget.cheaperAlternatives.length > 0 ? (
               budget.cheaperAlternatives.map((alt, idx) => (
                 <li 
                   key={idx} 
-                  className="text-xs font-semibold leading-relaxed bg-slate-50 dark:bg-zinc-950/60 border border-slate-100 dark:border-zinc-900/60 p-3 rounded-xl flex items-start gap-1.5 hover:-translate-x-0.5 transition-transform"
+                  style={{
+                    background: 'rgba(74, 124, 47, 0.03)',
+                    border: '1.5px solid rgba(74, 124, 47, 0.15)',
+                    padding: '12px 16px', borderRadius: 10,
+                    fontSize: '0.78rem', color: '#4A7C2F',
+                    lineHeight: 1.45, display: 'flex', gap: 8,
+                  }}
                 >
-                  <ChevronRight className="w-3.5 h-3.5 text-indigo-500 mt-0.5 shrink-0" />
+                  <ChevronRight size={14} style={{ color: '#4A7C2F', flexShrink: 0, marginTop: 1 }} />
                   <span>{alt}</span>
                 </li>
               ))
             ) : (
-              <li className="text-xs font-semibold text-slate-400 dark:text-zinc-500 italic">
-                All estimations match standard budget rates. No saving swaps suggested.
+              <li style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                All calculations align perfectly. No swaps required.
               </li>
             )}
           </ul>
