@@ -51,19 +51,26 @@ async def generate_trip_plan(request: TravelRequest) -> Dict[str, Any]:
         f"- Total Budget: ${request.budget} USD\n"
         f"- Travelers' Interests: {interests_str}\n"
         f"- Accessibility Needs: {request.accessibilityNeeds}\n"
-        f"- Language Preferences: {request.languages}\n\n"
+        f"- Language Preferences: {request.languages}\n"
+        f"- Target Historical Era (ChronoLens): {request.era}\n\n"
         f"Requirements:\n"
         f"1. Generate ONE structured JSON response containing the entire travel guide.\n"
         f"2. Every attraction, gem, food stall/restaurant, and event MUST have realistic decimal coordinates (latitude and longitude) matching its actual geographical location so it can be mapped.\n"
         f"3. All descriptions must focus on storytelling and immersive experiences rather than just generic lists of facts.\n"
-        f"4. The budget breakdown must calculate transportation, food, tickets, shopping, and miscellaneous, verify feasibility against the input budget, and suggest specific cheaper alternatives if over budget."
+        f"4. The budget breakdown must calculate transportation, food, tickets, shopping, and miscellaneous, verify feasibility against the input budget, and suggest specific cheaper alternatives if over budget.\n"
+        f"5. The 'chronoLens' section MUST contain AI-reconstructed historical contexts for the selected era: {request.era}.\n"
+        f"   - Reconstruct the immersiveStory in a cinematic first-person travel narrative (e.g., 'At sunrise, wooden shutters open...').\n"
+        f"   - Compile famous historical figures, then-vs-now landmarks, and daily life routines.\n"
+        f"   - If the era is 'Present Day', default all ChronoLens values to the modern day."
     )
 
     system_instruction = (
-        "You are an elite, highly experienced global travel curator, cultural anthropologist, and local guide.\n"
+        "You are an elite, highly experienced global travel curator, cultural anthropologist, local guide, and historian.\n"
         "Your mission is to help travelers discover destinations deeply, offering immersive storytelling about local history, "
         "hidden gems that tourists rarely see, authentic local food stalls/street markets/traditional restaurants, cultural etiquette guidelines, "
         "phrasebooks, budgets, and packing lists.\n"
+        "You are also the creator of ChronoLens AI: an immersive portal allowing travelers to reconstruct the daily life, "
+        "culture, etiquette, architecture, food, and characters of a destination during a specific historical era.\n"
         "You must return a single JSON object strictly matching the provided schema, with no markdown code blocks or wrapper text."
     )
 
@@ -143,16 +150,25 @@ async def generate_trip_plan(request: TravelRequest) -> Dict[str, Any]:
             parsed_json = json.loads(content_text)
             
             # Double check required fields exist (or fill default)
-            required_keys = ["story", "itinerary", "hiddenGems", "heritage", "food", "events", "culture", "budget", "packing", "localPhrases", "travelJournal", "instagramCaption", "safetyTips"]
+            required_keys = ["story", "itinerary", "hiddenGems", "heritage", "food", "events", "culture", "budget", "packing", "localPhrases", "travelJournal", "instagramCaption", "safetyTips", "chronoLens"]
             for key in required_keys:
                 if key not in parsed_json:
                     logger.warning(f"Key '{key}' was missing from Gemini response. Filling blank default.")
-                    if key in ["itinerary", "culture", "budget"]:
+                    if key in ["itinerary", "culture", "budget", "chronoLens"]:
                         parsed_json[key] = {}
                     elif key in ["hiddenGems", "heritage", "food", "events", "packing", "localPhrases", "safetyTips"]:
                         parsed_json[key] = []
                     else:
                         parsed_json[key] = ""
+
+            # Standardize internal ChronoLens dictionary defaults to prevent front-end crashes
+            if "chronoLens" not in parsed_json or not isinstance(parsed_json["chronoLens"], dict):
+                parsed_json["chronoLens"] = {}
+            cl = parsed_json["chronoLens"]
+            for sub_key in ["era", "historicalOverview", "immersiveStory"]:
+                if sub_key not in cl: cl[sub_key] = ""
+            for sub_key in ["dailyLife", "architecture", "clothing", "foodHistory", "transportation", "historicalFigures", "majorEvents", "thenVsNow", "historicalEtiquette"]:
+                if sub_key not in cl: cl[sub_key] = []
 
             return parsed_json
 

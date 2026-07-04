@@ -667,3 +667,212 @@ body {
   color: var(--accent);
   text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
 }
+
+/* ChronoLens Time Portal Vortex Animation */
+@keyframes vortex-spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0.3; }
+  50% { opacity: 0.75; }
+  100% { transform: translate(-50%, -50%) rotate(360deg); opacity: 0.3; }
+}
+@keyframes pulse-vortex {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.05); filter: brightness(1.25); }
+}
+
+.time-portal-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 30px auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  animation: pulse-vortex 4s ease-in-out infinite;
+}
+
+.time-portal-vortex {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 30%, var(--accent) 70%, transparent 95%);
+  border: 1px dashed var(--accent);
+  animation: vortex-spin 9s linear infinite;
+  pointer-events: none;
+}
+
+.time-portal-vortex-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, transparent 20%, var(--text-faint) 60%, transparent 90%);
+  border: 1.5px dotted var(--accent);
+  animation: vortex-spin 5s linear infinite reverse;
+  pointer-events: none;
+}
+
+.time-portal-core {
+  position: relative;
+  z-index: 10;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, var(--bg-card) 60%, var(--accent-subtle) 100%);
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 30px rgba(184, 134, 11, 0.4), inset 0 0 15px rgba(184, 134, 11, 0.2);
+}
+
+/* Vintage Timeline Node Styling */
+.vintage-timeline-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 10px 0;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.vintage-timeline-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--border-mid) 20%, var(--border-mid) 80%, transparent 95%);
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.vintage-timeline-line-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  background: var(--accent);
+  transform: translateY(-50%);
+  z-index: 2;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vintage-timeline-node {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  background: var(--bg-card);
+  border: 2px solid var(--border-mid);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vintage-timeline-node:hover {
+  border-color: var(--accent);
+  transform: scale(1.15);
+  box-shadow: 0 0 10px rgba(184, 134, 11, 0.3);
+}
+
+.vintage-timeline-node-active {
+  border-color: var(--accent);
+  background: var(--accent);
+  transform: scale(1.25);
+  box-shadow: 0 0 15px rgba(184, 134, 11, 0.6);
+}
+
+.vintage-timeline-label {
+  position: absolute;
+  top: -30px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.vintage-timeline-node-active .vintage-timeline-label {
+  color: var(--accent);
+}
+
+.vintage-timeline-year {
+  position: absolute;
+  bottom: -28px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.vintage-timeline-node-active .vintage-timeline-year {
+  color: var(--text);
+  font-weight: 800;
+}
+
+/* Parchment scroll paper themes */
+.historical-scroll {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-mid);
+  position: relative;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm), inset 0 0 40px rgba(0,0,0,0.02);
+}
+
+.dark .historical-scroll {
+  background: linear-gradient(135deg, #1C120C 0%, #170E08 100%);
+  border: 1px solid rgba(184, 134, 11, 0.15);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+}
+
+/* Then vs Now Card elements */
+.then-now-card {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.then-now-card:hover {
+  border-color: var(--accent-subtle);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+.dark .then-now-card:hover {
+  border-color: rgba(184, 134, 11, 0.25);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+/* Transparency warning banner */
+.ai-transparency-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(184, 134, 11, 0.05);
+  border: 1px solid rgba(184, 134, 11, 0.15);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  margin-top: 15px;
+}
+

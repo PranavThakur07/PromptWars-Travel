@@ -25,7 +25,8 @@ export const generateTravelPlan = async (params) => {
       travelStyle: params.travelStyle,
       interests: params.interests,
       accessibilityNeeds: params.accessibility || params.accessibilityNeeds || 'None',
-      languages: params.language || params.languages || 'English'
+      languages: params.language || params.languages || 'English',
+      era: params.era || 'Present Day'
     })
   });
 

@@ -21,15 +21,17 @@ import EtiquetteEtc from './components/EtiquetteEtc';
 import BudgetTravelPlanner from './components/BudgetTravelPlanner';
 import LanguagePacker from './components/LanguagePacker';
 import TravelJournalPostcard from './components/TravelJournalPostcard';
+import ChronoLens from './components/ChronoLens';
 
 const TABS = [
-  { id: 'overview',   label: 'Overview',    emoji: '🗺️', icon: Map },
-  { id: 'itinerary',  label: 'Itinerary',   emoji: '📅', icon: Calendar },
-  { id: 'gems',       label: 'Hidden Gems', emoji: '💎', icon: Gem },
-  { id: 'food',       label: 'Cuisine',     emoji: '🍜', icon: Utensils },
-  { id: 'culture',    label: 'Culture',     emoji: '🌐', icon: Globe },
-  { id: 'essentials', label: 'Essentials',  emoji: '🎒', icon: Briefcase },
-  { id: 'journal',    label: 'Journal',     emoji: '📝', icon: PenTool },
+  { id: 'chrono',     label: 'ChronoLens AI', emoji: '⏳', icon: Sparkles },
+  { id: 'overview',   label: 'Overview',      emoji: '🗺️', icon: Map },
+  { id: 'itinerary',  label: 'Itinerary',     emoji: '📅', icon: Calendar },
+  { id: 'gems',       label: 'Hidden Gems',   emoji: '💎', icon: Gem },
+  { id: 'food',       label: 'Cuisine',       emoji: '🍜', icon: Utensils },
+  { id: 'culture',    label: 'Culture',       emoji: '🌐', icon: Globe },
+  { id: 'essentials', label: 'Essentials',    emoji: '🎒', icon: Briefcase },
+  { id: 'journal',    label: 'Journal',       emoji: '📝', icon: PenTool },
 ];
 
 const TRAVEL_QUOTES = [
@@ -42,13 +44,95 @@ const TRAVEL_QUOTES = [
 ];
 
 const LOADING_MESSAGES = [
-  "Consulting ancient cartographers…",
-  "Deciphering local legends…",
-  "Unearthing hidden pathways…",
-  "Translating cultural secrets…",
-  "Mapping undiscovered stories…",
-  "Charting your expedition route…",
+  "Initializing ChronoLens…",
+  "Analyzing historical records…",
+  "Reconstructing cultural context…",
+  "Calibrating time coordinates…",
+  "Retrieving local records…",
+  "Decoding architectural footprints…",
 ];
+
+const CURATED_ERAS = {
+  kyoto: [
+    'Present Day (Modern Era)',
+    'Heian Period (794 - 1185)',
+    'Samurai Era / Sengoku (1467 - 1603)',
+    'Meiji Restoration (1868 - 1912)',
+    'Future Kyoto (2050)'
+  ],
+  delhi: [
+    'Present Day (Modern Era)',
+    'Indraprastha Era (Ancient)',
+    'Delhi Sultanate (1206 - 1526)',
+    'Mughal Era (1526 - 1857)',
+    'British Raj (1858 - 1947)',
+    'Future Delhi (2050)'
+  ],
+  rome: [
+    'Present Day (Modern Era)',
+    'Roman Republic (509 BCE - 27 BCE)',
+    'Roman Empire (27 BCE - 476 CE)',
+    'Renaissance Period (1400 - 1600)',
+    'Future Rome (2050)'
+  ],
+  paris: [
+    'Present Day (Modern Era)',
+    'Medieval Paris (1100 - 1400)',
+    'Belle Époque (1871 - 1914)',
+    'Future Paris (2050)'
+  ],
+  mumbai: [
+    'Present Day (Modern Era)',
+    'Maurya Empire (250 BCE)',
+    'Portuguese Bombay (1534 - 1661)',
+    'British East India Company (1661 - 1858)',
+    'Future Mumbai (2050)'
+  ],
+  default: [
+    'Present Day (Modern Era)',
+    'Future Era (2050)'
+  ]
+};
+
+const ERA_YEARS = {
+  'Present Day (Modern Era)': '2026',
+  'Heian Period (794 - 1185)': '794',
+  'Samurai Era / Sengoku (1467 - 1603)': '1650',
+  'Meiji Restoration (1868 - 1912)': '1868',
+  'Future Kyoto (2050)': '2050',
+  'Indraprastha Era (Ancient)': '1000 BCE',
+  'Delhi Sultanate (1206 - 1526)': '1300',
+  'Mughal Era (1526 - 1857)': '1630',
+  'British Raj (1858 - 1947)': '1911',
+  'Future Delhi (2050)': '2050',
+  'Roman Republic (509 BCE - 27 BCE)': '200 BCE',
+  'Roman Empire (27 BCE - 476 CE)': '150 CE',
+  'Renaissance Period (1400 - 1600)': '1500',
+  'Future Rome (2050)': '2050',
+  'Medieval Paris (1100 - 1400)': '1300',
+  'Belle Époque (1871 - 1914)': '1890',
+  'Future Paris (2050)': '2050',
+  'Maurya Empire (250 BCE)': '250 BCE',
+  'Portuguese Bombay (1534 - 1661)': '1600',
+  'British East India Company (1661 - 1858)': '1800',
+  'Future Mumbai (2050)': '2050',
+  'Future Era (2050)': '2050'
+};
+
+function getErasForDestination(dest) {
+  if (!dest) return CURATED_ERAS.default;
+  const d = dest.toLowerCase();
+  if (d.includes('kyoto')) return CURATED_ERAS.kyoto;
+  if (d.includes('delhi')) return CURATED_ERAS.delhi;
+  if (d.includes('rome')) return CURATED_ERAS.rome;
+  if (d.includes('paris')) return CURATED_ERAS.paris;
+  if (d.includes('mumbai')) return CURATED_ERAS.mumbai;
+  return CURATED_ERAS.default;
+}
+
+function getYearForEra(era) {
+  return ERA_YEARS[era] || '2026';
+}
 
 export default function App() {
   const [travelPlan, setTravelPlan]   = useLocalStorage('current_travel_plan', null);
@@ -58,7 +142,7 @@ export default function App() {
   const [copied, setCopied]           = useState(false);
   const [showToast, setShowToast]     = useState(false);
   const [serverHealth, setServerHealth] = useState(null);
-  const [activeTab, setActiveTab]     = useState('overview');
+  const [activeTab, setActiveTab]     = useState('chrono');
   const [formVisible, setFormVisible] = useState(false);
   const [loadingMsg, setLoadingMsg]   = useState(0);
   const [quoteIdx]                    = useState(() => Math.floor(Math.random() * TRAVEL_QUOTES.length));
@@ -83,7 +167,7 @@ export default function App() {
     try {
       const plan = await generateTravelPlan(formData);
       setTravelPlan(plan);
-      setActiveTab('overview');
+      setActiveTab('chrono');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 4000);
     } catch (err) {
@@ -94,7 +178,7 @@ export default function App() {
   };
 
   const handleRetry  = () => { if (lastInputs) handleGenerate(lastInputs); };
-  const handleReset  = () => { setTravelPlan(null); setLastInputs(null); setError(null); setShowToast(false); setFormVisible(false); };
+  const handleReset  = () => { setTravelPlan(null); setLastInputs(null); setError(null); setShowToast(false); setFormVisible(false); setActiveTab('chrono'); };
 
   const handleCopy = async () => {
     if (!travelPlan) return;
@@ -110,138 +194,72 @@ export default function App() {
   const budget = Number(lastInputs?.budget) || 1500;
 
   // ══════════════════════════════════════════════
-  // LOADING SCREEN
+  // LOADING SCREEN (Time-Travel Portal)
   // ══════════════════════════════════════════════
   if (isLoading) {
+    const selectedEra = lastInputs?.era || 'Present Day (Modern Era)';
     return (
       <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(155deg, #0F0A04 0%, #1C1008 40%, #2A170C 100%)',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
-        gap: 30, padding: 24,
+        gap: 20, padding: 24,
         position: 'relative',
         overflow: 'hidden',
       }}>
-        <style>{`
-          @keyframes stamp-drop {
-            0% { transform: scale(2.5) rotate(-45deg); opacity: 0; }
-            80% { transform: scale(0.95) rotate(-15deg); opacity: 1; }
-            100% { transform: scale(1) rotate(-12deg); opacity: 0.9; }
-          }
-          @keyframes line-draw {
-            to { stroke-dashoffset: 0; }
-          }
-          @keyframes glow-pulse {
-            0%, 100% { opacity: 0.25; }
-            50% { opacity: 0.45; }
-          }
-          .stamp-animate {
-            animation: stamp-drop 0.75s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-          }
-          .line-animate {
-            stroke-dasharray: 200;
-            stroke-dashoffset: 200;
-            animation: line-draw 4.5s ease-in-out infinite;
-          }
-          .pulse-glow {
-            animation: glow-pulse 3s ease-in-out infinite;
-          }
-        `}</style>
-
-        {/* Background rings */}
-        <div className="pulse-glow" style={{ position: 'absolute', width: 500, height: 500, borderRadius: '50%', border: '1px solid rgba(218, 165, 32, 0.04)', pointerEvents: 'none' }} />
-
-        {/* Animated graphics container */}
-        <div style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', zIndex: 10 }}>
-          {/* Animated compass */}
-          <div style={{ position: 'relative', width: 130, height: 130 }}>
-            <div className="spin-slow" style={{
-              position: 'absolute', inset: 0,
-              borderRadius: '50%',
-              border: '2px solid rgba(218, 165, 32, 0.22)',
-              boxShadow: '0 0 15px rgba(218, 165, 32, 0.08)',
-            }} />
-            <div className="spin-reverse" style={{
-              position: 'absolute', inset: 12,
-              borderRadius: '50%',
-              border: '1.5px dashed rgba(218, 165, 32, 0.15)',
-            }} />
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
+        {/* Animated Vortex Portal */}
+        <div className="time-portal-container">
+          <div className="time-portal-vortex" />
+          <div className="time-portal-vortex-inner" />
+          <div className="time-portal-core">
+            <Compass size={40} className="compass-needle" style={{ color: '#DAA520' }} />
+            <span style={{
+              fontFamily: "'Outfit', sans-serif", fontSize: '0.52rem', fontWeight: 900,
+              color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.14em', marginTop: 8
             }}>
-              <Compass size={48} className="compass-needle" style={{ color: '#DAA520' }} />
-            </div>
-          </div>
-
-          {/* Map route drawing simulation */}
-          <div style={{ width: 140, height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="140" height="90" viewBox="0 0 100 60" fill="none">
-              <path className="line-animate" d="M10,45 C25,20 40,55 55,25 C65,10 80,40 90,20" stroke="#DAA520" strokeWidth="2.5" strokeLinecap="round" />
-              <circle cx="10" cy="45" r="4" fill="#C0392B" />
-              <path d="M 90 20 L 83 23 L 87 15 Z" fill="#C0392B" />
-            </svg>
-          </div>
-
-          {/* Passport Stamp */}
-          <div className="stamp-animate" style={{
-            border: '4px double #C0392B',
-            borderRadius: '50%',
-            width: 100, height: 100,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            color: '#C0392B',
-            fontFamily: "'Outfit', sans-serif",
-            fontWeight: 900,
-            fontSize: '0.62rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            background: 'rgba(192, 57, 43, 0.03)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-          }}>
-            <span style={{ fontSize: '0.52rem', opacity: 0.8 }}>COMPASS AI</span>
-            <span style={{ fontSize: '1.4rem', margin: '2px 0' }}>✈️</span>
-            <span style={{ fontSize: '0.58rem', fontWeight: 800 }}>EXPLORING</span>
+              ChronoLens AI
+            </span>
           </div>
         </div>
 
-        <div style={{ textAlign: 'center', maxWidth: 460, zIndex: 10, marginTop: 20 }}>
+        {/* Loading details */}
+        <div style={{ textAlign: 'center', maxWidth: 480, zIndex: 10 }}>
           <h2 style={{
             fontFamily: "'Playfair Display', serif",
-            fontSize: '2.1rem', fontWeight: 900,
-            color: '#F5E6C8', marginBottom: 12, lineHeight: 1.1,
-            letterSpacing: '-0.01em',
+            fontSize: '2rem', fontWeight: 900,
+            color: '#F5E6C8', marginBottom: 12, lineHeight: 1.2
           }}>
-            Unfolding Your Expedition…
+            Traveling Across Time…
           </h2>
-          <p style={{
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: '0.85rem', fontWeight: 600,
-            color: 'rgba(212,184,150,0.85)',
-            letterSpacing: '0.04em',
-            minHeight: 24,
-            transition: 'opacity 0.3s',
-            background: 'rgba(0,0,0,0.25)',
-            padding: '8px 20px',
-            borderRadius: '99px',
-            border: '1px solid rgba(218, 165, 32, 0.1)',
-            display: 'inline-block',
-          }}>
-            {dest ? `📚 Surveying coordinates for ${dest}…` : LOADING_MESSAGES[loadingMsg]}
-          </p>
-        </div>
-
-        {/* Bouncing dots */}
-        <div style={{ display: 'flex', gap: 10, zIndex: 10 }}>
-          {[0, 1, 2].map(i => (
-            <div key={i} className="loading-dot" style={{ width: 10, height: 10, animationDelay: `${i * 0.22}s` }} />
-          ))}
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <p style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: '0.8rem', fontWeight: 700,
+              color: 'rgba(212,184,150,0.85)',
+              letterSpacing: '0.04em',
+              background: 'rgba(0,0,0,0.3)',
+              padding: '6px 18px',
+              borderRadius: '99px',
+              border: '1px solid rgba(218, 165, 32, 0.15)',
+              display: 'inline-block',
+            }}>
+              {LOADING_MESSAGES[loadingMsg]}
+            </p>
+            <p style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: '0.75rem', fontWeight: 800,
+              color: '#DAA520', textTransform: 'uppercase', letterSpacing: '0.05em'
+            }}>
+              Destination: {dest || 'Expedition'} · Year {getYearForEra(selectedEra)}
+            </p>
+          </div>
         </div>
 
         <p style={{
           fontFamily: "'Cormorant Garamond', serif",
-          fontSize: '1.2rem', fontStyle: 'italic',
+          fontSize: '1.15rem', fontStyle: 'italic',
           color: 'rgba(245,230,200,0.4)',
           textAlign: 'center', maxWidth: 440,
           zIndex: 10,
@@ -255,7 +273,7 @@ export default function App() {
   }
 
   // ══════════════════════════════════════════════
-  // HERO — no plan
+  // HERO — no plan loaded
   // ══════════════════════════════════════════════
   if (!travelPlan && !error) {
     return (
@@ -277,7 +295,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* Hero */}
+        {/* Hero Section */}
         <section className="hero-section hero-grid hero-glow" style={{ paddingTop: 80, display: 'flex', alignItems: 'center' }}>
           {/* Decorative rings */}
           <div style={{ position: 'absolute', top: '12%', right: '6%', width: 320, height: 320, borderRadius: '50%', border: '1px solid rgba(184,134,11,0.05)', pointerEvents: 'none' }} />
@@ -295,7 +313,7 @@ export default function App() {
                   color: '#DAA520', display: 'flex', alignItems: 'center', gap: 6,
                   fontFamily: "'Outfit', sans-serif",
                 }}>
-                  <Sparkles size={13} /> AI-Powered Cultural Expedition Guide
+                  <Sparkles size={13} /> ChronoLens AI • Travel Expedition Portal
                 </div>
 
                 {/* Heading */}
@@ -305,24 +323,24 @@ export default function App() {
                   fontWeight: 900, color: '#F5E6C8',
                   lineHeight: 1.1, letterSpacing: '-0.02em',
                 }}>
-                  Explore Beyond Maps.<br />
+                  Explore Places Across Time.<br />
                   <span style={{
                     background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #F0C040 100%)',
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
                   }}>
-                    Experience Every Story.
+                    Every Era Tells a Story.
                   </span>
                 </h1>
 
-                {/* Quote */}
+                {/* Description */}
                 <p className="animate-fade-up delay-300" style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   fontSize: '1.25rem', fontStyle: 'italic',
                   color: 'rgba(245,230,200,0.65)',
                   lineHeight: 1.5, borderLeft: '2px solid #DAA520', paddingLeft: 14,
                 }}>
-                  "The world is a book, and those who do not travel read only one page."
+                  "Most travel planners help you discover a destination. ChronoLens AI lets you discover its history by exploring the same place through different eras."
                 </p>
 
                 {/* Search Form Card */}
@@ -339,13 +357,6 @@ export default function App() {
                     initialValues={lastInputs}
                     heroMode
                   />
-                </div>
-
-                {/* Feature Strip */}
-                <div className="animate-fade-up delay-500 flex flex-wrap gap-x-5 gap-y-2 text-[0.68rem] font-bold text-rgba(245,230,200,0.35) font-display">
-                  {['✦ SINGLE REQ', '✦ INTERACTIVE MAPS', '✦ EXPLORER DIARY', '✦ ACCESSIBLE WCAG'].map(f => (
-                    <span key={f} style={{ color: 'rgba(245,230,200,0.45)', letterSpacing: '0.08em' }}>{f}</span>
-                  ))}
                 </div>
               </div>
 
@@ -398,7 +409,6 @@ export default function App() {
                         boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                       }}>
-                        <div className="spin-slow" style={{ position: 'absolute', inset: 4, borderRadius: '50%', border: '1px dashed rgba(184,134,11,0.2)' }} />
                         <Compass size={32} className="compass-needle" style={{ color: '#DAA520' }} />
                       </div>
 
@@ -413,7 +423,7 @@ export default function App() {
                         textTransform: 'uppercase', letterSpacing: '0.1em',
                         boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
                       }}>
-                        Plate I · Compass Rose
+                        Plate I · ChronoLens
                       </div>
                     </div>
 
@@ -428,14 +438,14 @@ export default function App() {
                         fontSize: '0.95rem', fontWeight: 700, color: '#F5E6C8',
                         lineHeight: 1.3,
                       }}>
-                        The Explorer's Almanac
+                        The Chronology Almanac
                       </div>
                       <div style={{
                         fontFamily: "'Cormorant Garamond', serif",
                         fontSize: '0.78rem', fontStyle: 'italic', color: 'rgba(212,184,150,0.65)',
                         marginTop: 4, lineHeight: 1.4,
                       }}>
-                        AI-generated guide mapping local secrets, traditional foods, budgets, and historical backstories across thousands of destinations.
+                        Unlock historical summaries, architectural guidelines, comparison cards, and custom schedules mapping destinations through the ages.
                       </div>
                     </div>
                   </div>
@@ -470,6 +480,9 @@ export default function App() {
   // ══════════════════════════════════════════════
   // EXPLORER DASHBOARD
   // ══════════════════════════════════════════════
+  const activeEras = getErasForDestination(lastInputs?.destination);
+  const currentSelectedEra = lastInputs?.era || activeEras[0];
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
       <DashboardHeader dest={dest} onCopy={handleCopy} copied={copied} onRetry={handleRetry} onReset={handleReset} serverHealth={serverHealth} />
@@ -485,7 +498,7 @@ export default function App() {
           display: 'flex', alignItems: 'center', gap: 8,
           animation: 'scale-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both',
         }}>
-          <Check size={16} /> Journey Guide Ready!
+          <Check size={16} /> Portal Chronology Synced!
         </div>
       )}
 
@@ -592,6 +605,79 @@ export default function App() {
 
             {/* Tab content */}
             <div key={activeTab} style={{ animation: 'fade-up 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
+
+              {/* ChronoLens Flagship Work space Tab */}
+              {activeTab === 'chrono' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  
+                  {/* Hero editorial banner */}
+                  <div
+                    className="collectible-card gold-glow animate-fade-up"
+                    style={{
+                      padding: '32px 36px',
+                      background: 'linear-gradient(to right, var(--bg-card), var(--bg-secondary))',
+                      border: '1.5px solid var(--accent)'
+                    }}
+                  >
+                    <div style={{
+                      fontSize: '0.72rem', fontWeight: 900,
+                      color: 'var(--accent)', letterSpacing: '0.15em',
+                      textTransform: 'uppercase', marginBottom: 8,
+                      fontFamily: "'Outfit', sans-serif", display: 'flex', alignItems: 'center', gap: 6
+                    }}>
+                      <Sparkles size={13} /> ChronoLens AI Active
+                    </div>
+                    
+                    <h2 style={{
+                      fontFamily: "'Playfair Display', serif",
+                      fontSize: '2.1rem', fontWeight: 900,
+                      color: 'var(--text)', marginBottom: 6, lineHeight: 1.15
+                    }}>
+                      {dest} • {travelPlan.chronoLens?.era || currentSelectedEra} • {getYearForEra(travelPlan.chronoLens?.era || currentSelectedEra)}
+                    </h2>
+                    
+                    <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 28 }}>
+                      Explore this destination's historical segments. Click a node on the journey timeline below to change eras.
+                    </p>
+
+                    {/* Vintage Year Timeline Selector */}
+                    <div className="vintage-timeline-container" role="tablist">
+                      <div className="vintage-timeline-line" />
+                      <div
+                        className="vintage-timeline-line-fill"
+                        style={{
+                          width: `${(activeEras.indexOf(currentSelectedEra) / Math.max(1, activeEras.length - 1)) * 100}%`
+                        }}
+                      />
+                      {activeEras.map(era => {
+                        const yr = getYearForEra(era);
+                        const isActive = currentSelectedEra === era;
+                        const shortLabel = era.split(' (')[0].split(' / ')[0];
+
+                        return (
+                          <button
+                            key={era}
+                            role="tab"
+                            aria-selected={isActive}
+                            onClick={() => { if (!isActive) handleGenerate({ ...lastInputs, era }); }}
+                            className={`vintage-timeline-node${isActive ? ' vintage-timeline-node-active' : ''}`}
+                            title={`Travel to ${era}`}
+                            disabled={isLoading}
+                          >
+                            <span className="vintage-timeline-label">{shortLabel}</span>
+                            <span className="vintage-timeline-year">{yr}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ChronoLens Details Component */}
+                  {travelPlan.chronoLens && (
+                    <ChronoLens data={travelPlan.chronoLens} />
+                  )}
+                </div>
+              )}
 
               {activeTab === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

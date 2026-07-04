@@ -11,6 +11,7 @@ class TravelRequest(BaseModel):
     interests: List[str] = Field(..., description="List of interest tags, e.g., ['Food', 'History', 'Nature']")
     accessibilityNeeds: Optional[str] = Field("None", description="Accessibility requirements")
     languages: Optional[str] = Field("English", description="Preferred languages spoken or understood")
+    era: Optional[str] = Field("Present Day", description="Target historical era for ChronoLens exploration")
 
 class ItineraryActivity(BaseModel):
     time: str = Field(..., description="Time block of the day, e.g., '09:00 AM - 11:30 AM' or 'Afternoon'")
@@ -83,6 +84,34 @@ class LocalPhrase(BaseModel):
     meaning: str = Field(..., description="Meaning in English")
     usageExample: str = Field(..., description="When to use this phrase")
 
+class ThenVsNowItem(BaseModel):
+    place: str = Field(..., description="Historical place or landmark name, e.g. 'Market Square'")
+    then: str = Field(..., description="Original appearance or functional usage in the target era")
+    now: str = Field(..., description="Modern day usage or layout conversion")
+
+class DailyLifeBlock(BaseModel):
+    timeOfDay: str = Field(..., description="Morning, Afternoon, or Evening")
+    description: str = Field(..., description="What people did, wore, ate, or how they spent this segment of the day")
+
+class HistoricalFigure(BaseModel):
+    name: str = Field(..., description="Name of the historical persona")
+    role: str = Field(..., description="Briefly who they were and why they were significant")
+    connection: str = Field(..., description="Their connection or footprint in this destination during the era")
+
+class ChronoLensData(BaseModel):
+    era: str = Field(..., description="Selected historical era name")
+    historicalOverview: str = Field(..., description="A concise historical description of the city in this era")
+    dailyLife: List[DailyLifeBlock] = Field(..., description="Daily routine details for Morning, Afternoon, and Evening")
+    architecture: List[str] = Field(..., description="Key architectural styles, landmarks, and elements of this era")
+    clothing: List[str] = Field(..., description="Common clothing, traditional fabrics, and ornaments worn")
+    foodHistory: List[str] = Field(..., description="Traditional dishes, seasonal ingredients, and eating customs of this era")
+    transportation: List[str] = Field(..., description="Primary methods of travel or carrying goods during this era")
+    historicalFigures: List[HistoricalFigure] = Field(..., description="Curated list of significant historical figures associated with the destination")
+    majorEvents: List[str] = Field(..., description="Important milestones or events that occurred in this destination during the era")
+    thenVsNow: List[ThenVsNowItem] = Field(..., description="Key comparisons showing historical landmarks and their modern-day statuses")
+    historicalEtiquette: List[str] = Field(..., description="Social customs, rules, and etiquettes of the historical period")
+    immersiveStory: str = Field(..., description="A first-person, cinematic storytelling travel log introducing the era's atmosphere")
+
 class TravelResponse(BaseModel):
     story: str = Field(..., description="A rich storytelling narrative introducing the journey to this destination")
     itinerary: Dict[str, List[ItineraryActivity]] = Field(..., description="Day-by-day timeline, e.g. {'Day 1': [...], 'Day 2': [...]}")
@@ -97,3 +126,4 @@ class TravelResponse(BaseModel):
     travelJournal: str = Field(..., description="Daily travel journal, memories summary, and shareable travel postcard content")
     instagramCaption: str = Field(..., description="Vibrant social media caption with emojis and hashtags")
     safetyTips: List[str] = Field(..., description="Detailed safety and local hazard warnings")
+    chronoLens: ChronoLensData = Field(..., description="ChronoLens AI time portal details and historical reconstructions")
